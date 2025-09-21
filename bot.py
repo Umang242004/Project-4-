@@ -12,7 +12,7 @@ client = tweepy.Client(
 )
 
 # 🔹 Subreddit rotation
-subs = ["funny", "memes", "aww", "nextfuckinglevel", "dankvideos"]
+subs = ["interestingasfuck", "Damnthatsinteresting", "toptalent", "nextfuckinglevel", "BeAmazed"]
 today_index = datetime.utcnow().day % len(subs)
 sub = subs[today_index]
 
