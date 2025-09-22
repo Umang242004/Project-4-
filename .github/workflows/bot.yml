@@ -1,7 +1,7 @@
 name: Reddit → Twitter Bot
 
 on:
-  schedule:
+  s/chedule:
     - cron: "0 9 * * *"   # 9 AM UTC
     - cron: "0 12 * * *"  # 12 PM UTC
     - cron: "0 15 * * *"  # 3 PM UTC
