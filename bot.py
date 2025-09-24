@@ -1,6 +1,7 @@
 import os
 import requests
 import tweepy
+import random, hashlib
 from datetime import datetime
 
 # 🔑 Twitter API Auth
@@ -11,13 +12,25 @@ client = tweepy.Client(
     access_token_secret=os.getenv("TW_ACCESS_SECRET")
 )
 
-# 🔹 Subreddit rotation
+# 🔹 Subreddit pool
 subs = ["interestingasfuck", "Damnthatsinteresting", "toptalent", "nextfuckinglevel", "BeAmazed"]
-today_index = datetime.utcnow().day % len(subs)
-sub = subs[today_index]
+
+# Generate deterministic shuffle for today
+today_str = datetime.utcnow().strftime("%Y-%m-%d")
+seed = int(hashlib.sha256(today_str.encode()).hexdigest(), 16)
+daily_subs = subs.copy()
+random.Random(seed).shuffle(daily_subs)
+
+# Map posting hours to slots
+slot_map = {9: 0, 12: 1, 15: 2, 18: 3, 21: 4}
+hour = datetime.utcnow().hour
+slot = slot_map.get(hour, 0)  # default = 0 if run at wrong time
+
+sub = daily_subs[slot % len(daily_subs)]
+print(f"🎯 Selected subreddit: {sub}")
 
 # 🔹 Fetch top Reddit post (last 24h)
-url = f"https://www.reddit.com/r/{sub}/top.json?t=day&limit=5"
+url = f"https://www.reddit.com/r/{sub}/top.json?t=day&limit=10"
 headers = {"User-agent": "reddit-twitter-bot"}
 res = requests.get(url, headers=headers).json()
 
@@ -29,7 +42,7 @@ for child in res["data"]["children"]:
         break
 
 if not post:
-    print("No video found.")
+    print(f"❌ No video found in r/{sub}")
     exit()
 
 video_url = post["media"]["reddit_video"]["fallback_url"]
