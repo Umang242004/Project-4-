@@ -149,7 +149,7 @@ def main():
         os.getenv("TW_ACCESS_TOKEN"),
         os.getenv("TW_ACCESS_SECRET"),
     )
-    api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
+    api = tweepy.API(auth, wait_on_rate_limit=True)
 
     # daily subs and slot logic
     daily = get_daily_subs(SUBS)
